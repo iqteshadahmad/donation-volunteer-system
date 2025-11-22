@@ -1,0 +1,154 @@
+{% extends 'base-db-volunteer.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+/* Global Theme Variables */
+:root {
+    --bg: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    --glass: rgba(255, 255, 255, 0.97);
+    --shadow: 0 40px 100px rgba(0,0,0,0.18);
+    --accent: #10b981;
+    --accent-dark: #059669;
+    --text-dark: #1e293b;
+}
+
+.table-container {
+    min-height: 100vh;
+    padding: 2rem 2rem;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+}
+
+.table-card {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--glass);
+    border-radius: 40px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.8);
+    transition: 0.7s ease;
+}
+
+.table-card:hover {
+    transform: translateY(-20px);
+    box-shadow: 0 70px 160px rgba(16,185,129,0.4);
+}
+
+.table-title {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--accent-dark);
+    margin-bottom: 1rem;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    letter-spacing: 1px;
+}
+
+.table-header {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
+    color: white !important;
+    font-size: 1rem;
+}
+
+.table {
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+}
+
+/* Row Hover Effect */
+.table tbody tr {
+    transition: 0.4s ease;
+}
+
+.table tbody tr:hover {
+    background: #ecfdf5 !important;
+    transform: scale(1.01);
+    box-shadow: 0 15px 40px rgba(16,185,129,0.25);
+}
+
+/* Table Text */
+.table td, .table th {
+    vertical-align: middle !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Link Styling */
+.table a {
+    color: var(--accent-dark);
+    font-weight: 700;
+    transition: 0.3s ease;
+}
+
+.table a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Counter Column */
+.table td:first-child {
+    font-weight: 900;
+    color: var(--accent-dark);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .table-card {
+        padding: 1rem;
+        border-radius: 25px;
+    }
+
+    .table-title {
+        font-size: 1.8rem;
+    }
+
+    .table td, .table th {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<div class="table-container">
+    <div class="table-card">
+
+        <h3 class="table-title">Donation Not Received</h3>
+        <hr>
+
+        <div class="table-responsive">
+            <table id="mytable" class="table data">
+                <thead class="table-header">
+                    <tr class="text-center">
+                        <th>#</th>
+                        <th>Donation Name</th>
+                        <th>Donation Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for i in donation %}
+                        <tr class="text-center">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{i.donationname}}</td>
+                            <td>{{i.donationdate}}</td>
+                            <td>{{i.status}}</td>
+                            <td><a href="{% url 'donationcollection-detail' i.id %}">View Details</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock main %}

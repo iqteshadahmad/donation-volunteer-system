@@ -1,0 +1,158 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    /* === MODERN TABLE THEME === */
+    #mytable {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+        border: none !important;
+        font-size: 0.95rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #2b6cb0 0%, #2c5282 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    #mytable th {
+        padding: 1.2rem 1rem !important;
+        border: none;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        position: relative;
+        color:white;
+    }
+
+    #mytable th::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background: rgba(255,255,255,0.4);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    #mytable th:hover::after {
+        width: 70%;
+    }
+
+    #mytable tbody tr {
+        transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        background-color: #fdfdfe;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #f8faff;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #ebf8ff 0%, #dbeafe 100%) !important;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+        z-index: 5;
+    }
+
+    #mytable td {
+        padding: 1rem !important;
+        vertical-align: middle;
+        color: #2d3748;
+        font-weight: 500;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    #mytable td a {
+        color: #4361ee;
+        font-weight: 600;
+        text-decoration: none;
+        position: relative;
+        padding: 0.35rem 0;
+        transition: all 0.3s ease;
+    }
+
+    #mytable td a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background: #4361ee;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    #mytable td a:hover {
+        color: #3f37c9;
+    }
+
+    #mytable td a:hover::after {
+        width: 100%;
+    }
+
+    /* Empty state */
+    #mytable .text-center {
+        font-style: italic;
+        color: #718096;
+        padding: 2rem !important;
+        font-size: 1.1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #mytable thead { font-size: 0.8rem; }
+        #mytable td, #mytable th { padding: 0.75rem 0.5rem !important; }
+        #mytable td a { font-size: 0.9rem; }
+    }
+</style>
+
+<div class="container mt-5 table-responsive">
+    <h3 class="text-center mb-4 fw-bold text-primary" style="letter-spacing: 0.5px;">
+        Manage Donor
+    </h3>
+    <hr class="bg-primary opacity-30">
+
+    <table id="mytable" class="table data align-middle">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">#</th>
+                <th>Donor Name</th>
+                <th>Email ID</th>
+                <th>Contact</th>
+                <th>Reg. Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in donor %}
+            <tr class="text-center">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.user.get_full_name }}</td>
+                <td>{{ i.user.email }}</td>
+                <td>{{ i.contact }}</td>
+                <td>{{ i.regdate|date:"d M Y" }}</td>
+                <td>
+                    <a href="{% url 'view_donordetail' i.id %}">
+                        View Details
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No donors found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock main %}

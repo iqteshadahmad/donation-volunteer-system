@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #f2f5fa 0%, #e7ebf3 100%);
+        --glass: rgba(255, 255, 255, 0.78);
+        --card-shadow: 0 25px 70px rgba(0,0,0,0.18);
+        --accent: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    body {
+        background: var(--bg);
+        min-height: 100vh;
+    }
+
+    .signup-container {
+        padding: 3rem 1rem;
+    }
+
+    .signup-card {
+        background: var(--glass);
+        backdrop-filter: blur(18px);
+        border-radius: 32px;
+        padding: 3.5rem 3rem;
+        border: 1px solid rgba(255,255,255,0.55);
+        box-shadow: var(--card-shadow);
+        transition: 0.5s ease;
+    }
+
+    .signup-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 38px 90px rgba(79,70,229,0.25);
+    }
+
+    .signup-title {
+        font-size: 2.5rem;
+        text-align: center;
+        font-weight: 800;
+        color: #1f1b4d;
+        margin-bottom: 0.5rem;
+    }
+
+    .signup-subtext {
+        color: #6b7280;
+        text-align: center;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.3rem;
+        display: inline-block;
+        color: #374151;
+    }
+
+    .form-control {
+        border: 2px solid #e2e4ea;
+        border-radius: 18px;
+        padding: 1rem 1.3rem;
+        background: rgba(255,255,255,0.7);
+        transition: all 0.35s ease;
+        box-shadow: inset 0 3px 10px rgba(0,0,0,0.03);
+    }
+
+    .form-control:focus {
+        border-color: var(--accent);
+        background: white;
+        box-shadow: 0 0 0 5px rgba(79,70,229,0.25);
+        transform: translateY(-3px);
+    }
+
+    .text-danger {
+        color: var(--danger) !important;
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+        display: block;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        border: none;
+        width: 100%;
+        padding: 1.1rem;
+        border-radius: 50px;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-top: 1.2rem;
+        cursor: pointer;
+        transition: 0.4s ease;
+        box-shadow: 0 15px 35px rgba(79,70,229,0.35);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transition: 0.6s ease;
+    }
+
+    .btn-submit:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 23px 55px rgba(79,70,229,0.45);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1.8rem;
+        font-size: 1rem;
+        color: #374151;
+    }
+
+    .login-link a {
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.25s;
+    }
+
+    .login-link a:hover {
+        opacity: 0.7;
+    }
+
+    .alert {
+        border-radius: 18px;
+        padding: 1rem;
+        margin: 1.3rem 0;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border: none;
+    }
+
+    @media (max-width: 768px) {
+        .signup-card { padding: 2.2rem 1.4rem; }
+        .signup-title { font-size: 2rem; }
+    }
+</style>
+
+
+<section class="signup-container">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-sm-12 col-md-8 col-lg-6 col-xl-5">
+
+                <div class="signup-card">
+
+                    <h2 class="signup-title">Donor Sign Up</h2>
+                    <p class="signup-subtext">Please enter the following details</p>
+
+                    <form action="" method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {% for fm in form1 %}
+                        <div class="form-group">
+                            {{ fm.label_tag }}
+                            {{ fm }}
+                            <small class="text-danger">{{ fm.errors|striptags }}</small>
+                        </div>
+                        {% endfor %}
+
+                        {% for fm in form2 %}
+                        <div class="form-group">
+                            {{ fm.label_tag }}
+                            {{ fm }}
+                            <small class="text-danger">{{ fm.errors|striptags }}</small>
+                        </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn-submit">
+                            Submit
+                        </button>
+
+                        <p class="login-link">
+                            Already have an account?  
+                            <a href="{% url 'login_donor' %}">Login</a>
+                        </p>
+
+                    </form>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                        <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock main %}

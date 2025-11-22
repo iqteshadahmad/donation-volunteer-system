@@ -1,0 +1,226 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    /* Full-width Modern Card with Scroll */
+    .detail-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        max-width: 1100px;
+        margin: 2rem auto;
+        border: none;
+    }
+
+    .detail-header {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    }
+
+    #mytable {
+        width: 100% !important;
+        border: none !important;
+        max-height: 80vh;
+        overflow-y: auto;
+        display: block;
+        scrollbar-width: thin;
+        scrollbar-color: #10b981 #f0fdf4;
+    }
+
+    #mytable::-webkit-scrollbar { width: 10px; }
+    #mytable::-webkit-scrollbar-track { background: #f0fdf4; border-radius: 10px; }
+    #mytable::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+
+    #mytable td {
+        padding: 1rem 2rem !important;
+        vertical-align: middle;
+        font-size: 1.05rem;
+        color: #1f2937;
+        border-bottom: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+        width:40%;
+    }
+
+    #mytable tr:hover td {
+        background-color: #f0fdf4 !important;
+    }
+
+    #mytable h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #374151;
+        font-size: 1.15rem;
+    }
+
+    .text-secondary {
+        color: #10b981 !important;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    #mytable img {
+        width: 120px;
+        height: 120px;
+        border-radius: 20px;
+        object-fit: cover;
+        border: 5px solid #e5e7eb;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        transition: all 0.4s ease;
+    }
+
+    #mytable img:hover {
+        transform: scale(1.2);
+        border-color: #10b981;
+        box-shadow: 0 20px 40px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Full-width fields */
+    .full-field {
+        background: #f8fffb;
+        padding: 1.5rem 2rem;
+        border-radius: 16px;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin: 0.5rem 0;
+        min-height: 60px;
+    }
+
+    /* Form Styling */
+    .form-control, select, textarea {
+        border-radius: 16px !important;
+        border: 2px solid #e5e7eb;
+        padding: 14px 18px;
+        font-size: 1.05rem;
+    }
+
+    .form-control:focus, select:focus, textarea:focus {
+        border-color: #10b981 !important;
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.15);
+    }
+
+    input[type="submit"] {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 60px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        transition: all 0.4s ease;
+    }
+
+    input[type="submit"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(16, 185, 129, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .detail-card { margin: 1rem; border-radius: 18px; }
+        #mytable img { width: 90px; height: 90px; }
+        #mytable td { padding: 1.2rem !important; }
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <div class="detail-card">
+        <div class="detail-header">
+            View Volunteer Detail
+        </div>
+
+        <table id="mytable" class="table align-middle text-center">
+            <tbody>
+                <tr>
+                    <td><h5>Volunteer Name</h5></td>
+                    <td><h5 class="text-secondary">{{volunteer.user.first_name}} {{volunteer.user.last_name}}</h5></td>
+                    <td><h5>Volunteer Contact</h5></td>
+                    <td><h5 class="text-secondary">{{volunteer.contact}}</h5></td>
+                </tr>
+
+                <tr>
+                    <td><h5>Email</h5></td>
+                    <td><h5 class="text-secondary">{{volunteer.user.email}}</h5></td>
+                    <td><h5>Registration Date</h5></td>
+                    <td><h5 class="text-secondary">{{volunteer.regdate|date:"d M Y"}}</h5></td>
+                </tr>
+
+                <tr>
+                    <td><h5>Volunteer Pic</h5></td>
+                    <td><img src="{{volunteer.userpic.url}}" alt="Volunteer"></td>
+                    <td><h5>ID Card Pic</h5></td>
+                    <td><img src="{{volunteer.idpic.url}}" alt="ID Card"></td>
+                </tr>
+
+                <tr>
+                    <td><h5>Address</h5></td>
+                    <td colspan="3" class="text-start">
+                        <div class="full-field">{{volunteer.address|default:"Not provided"}}</div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><h5>About</h5></td>
+                    <td colspan="3" class="text-start">
+                        <div class="full-field">{{volunteer.aboutme|default:"Not provided"}}</div>
+                    </td>
+                </tr>
+
+                {% if volunteer.status == 'pending' %}
+                <form method="post">
+                    {% csrf_token %}
+                    <tr>
+                        <td><h5>Status</h5></td>
+                        <td colspan="3">
+                            <select class="form-control" name="status" required>
+                                <option value="accept">Accept</option>
+                                <option value="reject">Reject</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><h5>Admin Remark</h5></td>
+                        <td colspan="3">
+                            <textarea class="form-control" name="adminremark" rows="4" placeholder="Enter your remark here..."></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td colspan="3" class="pt-4">
+                            <input type="submit" value="Update Status">
+                        </td>
+                    </tr>
+                </form>
+                {% else %}
+                <tr>
+                    <td><h5>Status</h5></td>
+                    <td colspan="3">
+                        <h5 class="text-success fw-bold text-capitalize">{{volunteer.status}}</h5>
+                    </td>
+                </tr>
+                <tr>
+                    <td><h5>Updation Date</h5></td>
+                    <td colspan="3"><h5 class="text-secondary">{{volunteer.updationdate|date:"d M Y"}}</h5></td>
+                </tr>
+                <tr>
+                    <td><h5>Admin Remark</h5></td>
+                    <td colspan="3" class="text-start">
+                        <div class="full-field">{{volunteer.adminremark|default:"No remark added"}}</div>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock main %}

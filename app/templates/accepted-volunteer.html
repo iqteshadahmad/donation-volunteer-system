@@ -1,0 +1,141 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    #mytable {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+        border: none !important;
+        font-size: 0.95rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #06d6a0 0%, #049f75 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    #mytable th {
+        padding: 1.3rem 1rem !important;
+        border: none;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    #mytable tbody tr {
+        transition: all 0.35s ease;
+        background-color: #fdfdfe;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #f0fdfa;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(6, 214, 160, 0.18);
+        z-index: 10;
+    }
+
+    #mytable td {
+        padding: 1.1rem !important;
+        vertical-align: middle;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    #mytable td a {
+        color: #0d9488;
+        font-weight: 700;
+        text-decoration: none;
+        padding: 0.4rem 0;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    #mytable td a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2.5px;
+        bottom: 0;
+        left: 50%;
+        background: #0d9488;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    #mytable td a:hover {
+        color: #0f766e;
+    }
+
+    #mytable td a:hover::after {
+        width: 100%;
+    }
+
+    /* Status badge styling (if needed later) */
+    #mytable td:nth-child(6) {
+        font-weight: 600;
+        color: #059669;
+    }
+
+    @media (max-width: 768px) {
+        #mytable thead { font-size: 0.8rem; }
+        #mytable td, #mytable th { padding: 0.8rem 0.5rem !important; }
+    }
+</style>
+
+<div class="container mt-5 table-responsive">
+    <h3 class="text-center mb-4 fw-bold" style="color: #059669; letter-spacing: 0.5px;">
+        Accepted Volunteers
+    </h3>
+    <hr class="bg-success opacity-30">
+
+    <table id="mytable" class="table data align-middle">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">#</th>
+                <th>Volunteer Name</th>
+                <th>Email ID</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Reg. Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in volunteer %}
+              <tr class="text-center">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ i.user.first_name }} {{ i.user.last_name }}</td>
+                  <td>{{ i.user.email }}</td>
+                  <td>{{ i.contact }}</td>
+                  <td>
+                      <span class="text-success fw-bold">{{ i.status }}</span>
+                  </td>
+                  <td>{{ i.regdate|date:"d M Y" }}</td>
+                  <td>
+                      <a href="{% url 'view_volunteerdetail' i.id %}">
+                          View Details
+                      </a>
+                  </td>
+              </tr>
+            {% empty %}
+              <tr>
+                  <td colspan="7" class="text-center py-5 text-muted fst-italic">
+                      No accepted volunteers found
+                  </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock main %}

@@ -1,0 +1,248 @@
+{% extends 'base-db-donor.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --card-blue: #6366f1;
+        --card-green: #10b981;
+        --card-red: #ef4444;
+        --card-amber: #f59e0b;
+        --card-slate: #64748b;
+        --bg-gradient: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 100%);
+        --shadow: 0 20px 40px rgba(0,0,0,0.08);
+        --shadow-hover: 0 30px 60px rgba(0,0,0,0.18);
+    }
+
+    body {
+        background: var(--bg-gradient);
+        min-height: 100vh;
+    }
+
+    .donor-dashboard {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.8rem;
+        padding: 1rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(255,255,255,0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-15px) scale(1.03);
+        box-shadow: var(--shadow-hover);
+        z-index: 10;
+    }
+
+    .card-header {
+        padding: 2rem 1.5rem 1.5rem;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+        pointer-events: none;
+    }
+
+    .card-header h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: 0.5px;
+    }
+
+    .card-header hr {
+        border: none;
+        height: 3px;
+        background: rgba(255,255,255,0.4);
+        border-radius: 3px;
+        width: 60px;
+        margin: 0.8rem auto;
+    }
+
+    .count-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .count-row i {
+        font-size: 2.8rem;
+        opacity: 0.9;
+    }
+
+    .count-row .number {
+        font-size: 4.2rem;
+        font-weight: 800;
+        letter-spacing: -2px;
+    }
+
+    .card-footer {
+        padding: 1.2rem;
+        background: #f8fafc;
+        text-align: center;
+        transition: all 0.4s ease;
+    }
+
+    .card-footer a {
+        color: #6366f1;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1.05rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .card-footer a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 50%;
+        background: #6366f1;
+        transition: all 0.4s ease;
+        transform: translateX(-50%);
+    }
+
+    .card-footer a:hover {
+        color: #4f46e5;
+    }
+
+    .card-footer a:hover::after {
+        width: 100%;
+    }
+
+    /* Individual Card Colors */
+    .card-total { --header-bg: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .card-accepted { --header-bg: linear-gradient(135deg, #10b981, #059669); }
+    .card-rejected { --header-bg: linear-gradient(135deg, #ef4444, #dc2626); }
+    .card-pending { --header-bg: linear-gradient(135deg, #f59e0b, #d97706); }
+    .card-delivered { --header-bg: linear-gradient(135deg, #64748b, #475569); }
+
+    .card-total .card-header { background: var(--header-bg); }
+    .card-accepted .card-header { background: var(--header-bg); }
+    .card-rejected .card-header { background: var(--header-bg); }
+    .card-pending .card-header { background: var(--header-bg); }
+    .card-delivered .card-header { background: var(--header-bg); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid { gap: 1.2rem; padding: 0.5rem; }
+        .count-row i { font-size: 2.2rem; }
+        .count-row .number { font-size: 3.2rem; }
+        .card-header h3 { font-size: 1.1rem; }
+        .stat-card:hover { transform: translateY(-8px) scale(1.02); }
+    }
+</style>
+
+<div class="donor-dashboard">
+    <div class="stats-grid">
+        <!-- Total Donations -->
+        <div class="stat-card card-total">
+            <div class="card-header">
+                <h3>My Total Donations</h3>
+                <hr>
+                <div class="count-row">
+                    <i class="fa fa-list"></i>
+                    <div class="number">{{ donationcount }}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'donation_history' %}">View Details</a>
+            </div>
+        </div>
+
+        <!-- Accepted -->
+        <div class="stat-card card-accepted">
+            <div class="card-header">
+                <h3>My Accepted Donations</h3>
+                <hr>
+                <div class="count-row">
+                    <i class="fa fa-snowflake"></i>
+                    <div class="number">{{ acceptedcount }}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'accepted_donation' %}">View Details</a>
+            </div>
+        </div>
+
+        <!-- Rejected -->
+        <div class="stat-card card-rejected">
+            <div class="card-header">
+                <h3>My Rejected Donations</h3>
+                <hr>
+                <div class="count-row">
+                    <i class="fa fa-arrows"></i>
+                    <div class="number">{{ rejectedcount }}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'rejected_donation' %}">View Details</a>
+            </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="stat-card card-pending">
+            <div class="card-header">
+                <h3>My Pending Donations</h3>
+                <hr>
+                <div class="count-row">
+                    <i class="fa fa-exchange"></i>
+                    <div class="number">{{ pendingcount }}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'pending_donation' %}">View Details</a>
+            </div>
+        </div>
+
+        <!-- Delivered -->
+        <div class="stat-card card-delivered">
+            <div class="card-header">
+                <h3>My Successfully Delivered Donations</h3>
+                <hr>
+                <div class="count-row">
+                    <i class="fa-solid fa-bahai"></i>
+                    <div class="number">{{ deliveredcount }}</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'donationdelivered_admin' %}">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto vertical scroll for main content -->
+<script>
+    document.querySelector('.home_content')?.style = `
+        overflow-y: auto;
+        padding-bottom: 3rem;
+    `;
+</script>
+
+{% endblock main %}

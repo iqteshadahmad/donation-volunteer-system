@@ -1,0 +1,326 @@
+{% extends 'base-db-volunteer.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        --glass: rgba(255, 255, 255, 0.97);
+        --shadow: 0 40px 100px rgba(0,0,0,0.18);
+        --accent: #10b981;
+        --accent-glow: #34d399;
+        --success: #059669;
+    }
+
+    .delivery-container {
+        padding: 2rem 2rem;
+        min-height: 100vh;
+        background: var(--bg);
+        display: flex;
+        justify-content: center;
+    }
+
+    .delivery-card {
+        max-width: 1000px;
+        width: 100%;
+        background: var(--glass);
+        border-radius: 40px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255,255,255,0.8);
+        transition: all 0.7s ease;
+    }
+
+    .delivery-card:hover {
+        transform: translateY(-22px);
+        box-shadow: 0 70px 160px rgba(16,185,129,0.4);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+        font-size: 2.8rem;
+        font-weight: 900;
+        letter-spacing: 3px;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: "";
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10rem;
+        opacity: 0.08;
+        pointer-events: none;
+    }
+
+    .detail-body {
+        padding: 0.5rem 3rem;
+        max-height: 78vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    .detail-body::-webkit-scrollbar {
+        width: 12px;
+    }
+    .detail-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(#10b981, #34d399);
+        border-radius: 10px;
+    }
+
+    .section-title {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.5rem 1.4rem;
+        border-radius: 24px;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 3rem 0 2rem;
+        box-shadow: 0 15px 40px rgba(16,185,129,0.35);
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 2rem;
+        background: white;
+        border-radius: 28px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        transition: all 0.5s ease;
+    }
+
+    .detail-row:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 55px rgba(16,185,129,0.2);
+    }
+
+    .detail-label {
+        font-weight: 800;
+        color: var(--accent);
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .detail-value {
+        font-size: 1.25rem;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .detail-img {
+        width: 140px;
+        height: 140px;
+        border-radius: 28px;
+        object-fit: cover;
+        border: 8px solid white;
+        box-shadow: 0 20px 50px rgba(16,185,129,0.4);
+        transition: all 0.6s ease;
+    }
+
+    .detail-img:hover {
+        transform: scale(1.2);
+        box-shadow: 0 35px 80px rgba(16,185,129,0.6);
+    }
+
+    .status-badge {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.2rem 1rem;
+        border-radius: 60px;
+        font-weight: 800;
+        font-size: 1.3rem;
+        box-shadow: 0 15px 40px rgba(16,185,129,0.5);
+    }
+
+    /* File Upload Styling */
+    .file-upload-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-upload-wrapper input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    .file-upload-btn {
+        display: block;
+        width: 100%;
+        padding: 2rem;
+        background: white;
+        border: 3px dashed var(--accent);
+        border-radius: 28px;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--accent);
+        transition: all 0.5s ease;
+        box-shadow: 0 15px 40px rgba(16,185,129,0.15);
+    }
+
+    .file-upload-btn:hover {
+        background: #ecfdf5;
+        border-color: var(--accent-glow);
+        color: var(--success);
+        transform: translateY(-8px);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 1rem 5rem;
+        border: none;
+        border-radius: 70px;
+        font-size: 1.6rem;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 25px 60px rgba(16,185,129,0.5);
+        transition: all 0.6s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 40px 90px rgba(16,185,129,0.7);
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.8s, height 0.8s;
+    }
+
+    .submit-btn:hover::before {
+        width: 500px;
+        height: 500px;
+    }
+
+    @media (max-width: 768px) {
+        .detail-row { grid-template-columns: 1fr; }
+        .card-header { font-size: 2.2rem; padding: 2.5rem 1.5rem; }
+        .detail-img { width: 120px; height: 120px; }
+    }
+</style>
+
+<div class="delivery-container">
+    <div class="delivery-card">
+        <div class="card-header">
+            Finalize Donation Delivery
+        </div>
+
+        <div class="detail-body">
+
+            <div class="section-title">Donor Details</div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donor Name</span></div>
+                <div class="detail-value">{{donation.donor.user.first_name}} {{donation.donor.user.last_name}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Contact</span></div>
+                <div class="detail-value">{{donation.donor.contact}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Email</span></div>
+                <div class="detail-value">{{donation.donor.user.email}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donor Photo</span></div>
+                <div><img src="{{donation.donor.userpic.url}}" class="detail-img" alt="Donor"></div>
+            </div>
+
+            <div class="section-title">Donation Details</div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Name</span></div>
+                <div class="detail-value">{{donation.donationname}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Image</span></div>
+                <div><img src="{{donation.donationpic.url}}" class="detail-img" alt="Donation"></div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Collection Location</span></div>
+                <div class="detail-value">{{donation.collectionloc}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Date</span></div>
+                <div class="detail-value">{{donation.donationdate|date:"d M, Y"}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Current Status</span></div>
+                <div><span class="status-badge">{{donation.status}}</span></div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Volunteer Remark</span></div>
+                <div class="detail-value">{{donation.volunteerremark|default:"No remark"}}</div>
+            </div>
+
+            {% if donation.status == "Donation Received" %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="section-title">Complete Delivery</div>
+
+                <div class="detail-row">
+                    <div><span class="detail-label">Mark as Delivered</span></div>
+                    <div>
+                        <label style="font-size: 1.4rem; font-weight: 700; color: var(--success);">
+                            <input type="radio" name="status" value="Donation Delivered Successfully" required style="width: 28px; height: 28px; margin-right: 12px;">
+                            Donation Delivered Successfully
+                        </label>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div><span class="detail-label">Upload Delivery Photo</span></div>
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="deliverypic" accept="image/*" required>
+                        <div class="file-upload-btn">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: var(--accent);"></i><br>
+                            Click or drag photo here
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <button type="submit" class="submit-btn">
+                        Update & Complete Delivery
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.home_content')?.style.overflowY = 'auto';
+</script>
+
+{% endblock main %}

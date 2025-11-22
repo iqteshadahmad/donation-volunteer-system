@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+  :root {
+    --bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+    --card: rgba(255, 255, 255, 0.75);
+    --shadow: 0 20px 50px rgba(0,0,0,0.15);
+    --accent: #4f46e5;
+    --danger: #ef4444;
+  }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+  }
+
+  .login-wrapper {
+    padding: 2rem 1rem;
+  }
+
+  .login-card {
+    background: var(--card);
+    backdrop-filter: blur(18px);
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.55);
+    transition: all 0.5s ease;
+    padding: 3rem 2.5rem;
+  }
+
+  .login-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 75px rgba(79,70,229,0.25);
+  }
+
+  .login-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: #1e1b4b;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .login-sub {
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .form-group {
+    position: relative;
+    margin-bottom: 1.8rem;
+  }
+
+  .form-group i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #818cf8;
+    font-size: 1.2rem;
+  }
+
+  .form-control {
+    padding: 1rem 1.2rem 1rem 3rem;
+    border-radius: 16px;
+    border: 2px solid #e5e7eb;
+    background: rgba(255,255,255,0.65);
+    transition: all 0.35s ease;
+    width: 100%;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.03);
+  }
+
+  .form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 5px rgba(79,70,229,0.25);
+    outline: none;
+    background: white;
+    transform: translateY(-3px);
+  }
+
+  .text-danger {
+    color: var(--danger) !important;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  .btn-login {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: white;
+    padding: 1rem 0;
+    border-radius: 50px;
+    border: none;
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 15px 35px rgba(79,70,229,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-login:hover::before {
+    width: 280px;
+    height: 280px;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 55px rgba(79,70,229,0.45);
+  }
+
+  .footer-text {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: #374151;
+  }
+
+  .footer-text a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .footer-text a:hover {
+    opacity: 0.7;
+  }
+
+  .alert {
+    border-radius: 18px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: none;
+  }
+</style>
+
+
+<section class="login-wrapper">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="col-sm-12 col-md-8 col-lg-6 col-xl-5">
+
+        <div class="login-card">
+          <h2 class="login-title">Volunteer Login</h2>
+          <p class="login-sub">Enter your email & password to continue</p>
+
+          <form action="" method="post" novalidate>
+            {% csrf_token %}
+            {% for fm in form %}
+            <div class="form-group">
+              <i class="fas {% if 'password' in fm.name %}fa-lock{% else %}fa-user{% endif %}"></i>
+              {{ fm }}
+              {% if fm.errors %}
+              <small class="text-danger">{{ fm.errors|striptags }}</small>
+              {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-login">Login</button>
+          </form>
+
+          <p class="footer-text mt-4">
+            Forgot your password?
+            <a href="#">Reset</a>
+          </p>
+
+          <p class="footer-text">
+            Don't have an account?
+            <a href="{% url 'signup_volunteer' %}">Sign Up</a>
+          </p>
+
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-danger mt-4">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} text-center mt-4">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock main %}

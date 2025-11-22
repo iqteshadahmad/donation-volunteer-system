@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+        --card: rgba(255, 255, 255, 0.75);
+        --shadow: 0 20px 50px rgba(0,0,0,0.15);
+        --accent: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    body {
+        background: var(--bg);
+        min-height: 100vh;
+    }
+
+    .login-wrapper {
+        padding: 2rem 1rem;
+    }
+
+    .login-card {
+        background: var(--card);
+        backdrop-filter: blur(18px);
+        border-radius: 32px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255,255,255,0.55);
+        padding: 3rem 2.5rem;
+        transition: all 0.5s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 75px rgba(79,70,229,0.25);
+    }
+
+    .login-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: #1e1b4b;
+        text-align: center;
+        margin-bottom: 0.8rem;
+    }
+
+    .login-sub {
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.6rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #1e1b4b;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control {
+        padding: 0.95rem 1.2rem;
+        border-radius: 16px;
+        border: 2px solid #e5e7eb;
+        background: rgba(255,255,255,0.65);
+        transition: all 0.35s ease;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 5px rgba(79,70,229,0.25);
+        outline: none;
+        background: white;
+        transform: translateY(-3px);
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        color: white;
+        padding: 1rem 0;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: 0.4s;
+        box-shadow: 0 15px 35px rgba(79,70,229,0.35);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 22px 55px rgba(79,70,229,0.45);
+    }
+
+    .forgot-link {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: #4f46e5;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .forgot-link:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        border-radius: 18px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.09);
+    }
+</style>
+
+
+<section class="login-wrapper">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-sm-12 col-md-8 col-lg-6 col-xl-5">
+
+                <div class="login-card">
+
+                    <h2 class="login-title">Admin Login</h2>
+                    <p class="login-sub">Please enter your login details</p>
+
+                    <form action="" method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% for fm in form %}
+                            <div class="form-group">
+                                {{ fm.label_tag }}
+                                {{ fm }}
+                                <small class="text-danger">{{ fm.errors|striptags }}</small>
+                            </div>
+                        {% endfor %}
+
+                        <a href="{% url 'password_reset' %}" class="forgot-link">Forgot password?</a>
+
+                        <button type="submit" class="btn-submit">Login</button>
+                    </form>
+
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <p class="alert alert-danger my-3">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock main %}

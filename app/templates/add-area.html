@@ -1,0 +1,172 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    .add-card {
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 22px 70px rgba(0,0,0,0.15);
+        max-width: 850px;
+        margin: 0.5rem auto;
+        border: none;
+    }
+
+    .add-header {
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        color: white;
+        padding: 0.5rem 2rem;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        position: relative;
+    }
+
+    .add-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 5px;
+        background: rgba(255,255,255,0.4);
+        border-radius: 3px;
+    }
+
+    .form-container {
+        padding: 1rem 4rem;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #581c87;
+        font-size: 1.15rem;
+        margin-bottom: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control, textarea.form-control {
+        border-radius: 18px;
+        border: 2.5px solid #e2e8f0;
+        padding: 16px 20px;
+        font-size: 1.1rem;
+        background-color: #faf9ff;
+        transition: all 0.4s ease;
+    }
+
+    .form-control:focus, textarea.form-control:focus {
+        border-color: #7c3aed !important;
+        background-color: white;
+        box-shadow: 0 0 0 6px rgba(124, 58, 237, 0.22);
+        outline: none;
+    }
+
+    /* Django Form Errors */
+    small.text-danger {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-top: 0.4rem;
+        display: block;
+    }
+
+    /* Messages/Alerts */
+    .alert {
+        border-radius: 18px;
+        padding: 1.3rem 1.8rem;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        margin-bottom: 1.8rem;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+    }
+
+    .alert-danger, .alert-error {
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+    }
+
+    .alert-warning {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 5px 60px;
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        box-shadow: 0 14px 40px rgba(124, 58, 237, 0.45);
+        transition: all 0.5s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 60px rgba(124, 58, 237, 0.55);
+        background: linear-gradient(135deg, #6d28d9, #5b21b6);
+        color:white;
+    }
+
+    @media (max-width: 768px) {
+        .add-card { margin: 1.5rem; border-radius: 22px; }
+        .add-header { font-size: 1.8rem; padding: 2rem 1.5rem; }
+        .form-container { padding: 2.5rem 2rem; }
+        .btn-submit { font-size: 1.15rem; padding: 16px 50px; }
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <div class="add-card">
+        <div class="add-header">
+            Add New Area
+        </div>
+
+        <div class="form-container">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                        <strong>
+                            {% if message.tags == 'success' %}Success!{% elif message.tags == 'error' %}Error!{% else %}Info{% endif %}
+                        </strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="" method="post" novalidate>
+                {% csrf_token %}
+
+                {% for fm in form %}
+                    <div class="mb-4">
+                        {{ fm.label_tag }}
+                        {{ fm }}
+                        {% if fm.errors %}
+                            <small class="text-danger">{{ fm.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="d-grid mt-5">
+                    <button type="submit" class="btn btn-submit">
+                        Submit Area
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

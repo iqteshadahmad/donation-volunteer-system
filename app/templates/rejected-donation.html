@@ -1,0 +1,175 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    .rejected-card {
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(0,0,0,0.16);
+        max-width: 1200px;
+        margin: 2.5rem auto;
+        border: none;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 60%, #991b1b 100%);
+        color: white;
+        padding: 2.3rem;
+        text-align: center;
+        font-size: 2.3rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .scroll-container {
+        max-height: 75vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #dc2626 #fee2e2;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+        background: #fee2e2;
+        border-radius: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(#dc2626, #b91c1c);
+        border-radius: 10px;
+    }
+
+    #mytable {
+        width: 100% !important;
+        border: none !important;
+        font-size: 1rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1.3px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    #mytable th {
+        padding: 1.6rem 1.2rem !important;
+        border: none;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    #mytable tbody tr {
+        transition: all 0.38s ease;
+        background-color: #fdfdfd;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #fef2f2;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(220, 38, 38, 0.28);
+        z-index: 10;
+    }
+
+    #mytable td {
+        padding: 1.5rem 1.2rem !important;
+        vertical-align: middle;
+        color: #1e293b;
+        font-weight: 500;
+        border-bottom: 1px solid #fecaca;
+    }
+
+    /* Status - Bold Red */
+    #mytable td:nth-child(4) {
+        font-weight: 800;
+        color: #991b1b !important;
+        text-transform: capitalize;
+        font-size: 1.05rem;
+    }
+
+    /* View Details Button */
+    .btn-view {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white !important;
+        padding: 0.75rem 2.2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 140px;
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        transition: all 0.45s ease;
+    }
+
+    .btn-view:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 45px rgba(220, 38, 38, 0.55);
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
+    }
+
+    @media (max-width: 768px) {
+        .rejected-card { margin: 1rem; border-radius: 22px; }
+        .card-header { font-size: 1.8rem; padding: 1.8rem; }
+        #mytable td, #mytable th { padding: 1.1rem 0.8rem !important; font-size: 0.92rem; }
+        .btn-view { padding: 0.65rem 1.6rem; font-size: 0.95rem; min-width: 120px; }
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <div class="rejected-card">
+        <div class="card-header">
+            Donation Rejected
+        </div>
+
+        <div class="scroll-container">
+            <table id="mytable" class="table data align-middle text-center">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Donation Name</th>
+                        <th>Donation Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in donation %}
+                    <tr>
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td class="fw-semibold">{{ i.donationname }}</td>
+                        <td>{{ i.donationdate|date:"d M Y" }}</td>
+                        <td>Rejected</td>
+                        <td>
+                            <a href="{% url 'view_donationdetail' i.id %}" class="btn-view">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted fst-italic fs-2">No rejected donations</div>
+                            <div class="mt-3 text-danger fs-4">Great job — all donations are being accepted!</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

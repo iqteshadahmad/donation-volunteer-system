@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+        --card: rgba(255, 255, 255, 0.75);
+        --shadow: 0 20px 50px rgba(0,0,0,0.15);
+        --accent: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    body {
+        background: var(--bg);
+        min-height: 100vh;
+    }
+
+    .signup-wrapper {
+        padding: 2rem 1rem;
+    }
+
+    .signup-card {
+        background: var(--card);
+        backdrop-filter: blur(18px);
+        border-radius: 32px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(255,255,255,0.55);
+        transition: all 0.5s ease;
+        padding: 3rem 2.5rem;
+    }
+
+    .signup-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 75px rgba(79,70,229,0.25);
+    }
+
+    .signup-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e1b4b;
+        text-align: center;
+        margin-bottom: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .signup-sub {
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.6rem;
+        width: 100%;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #1e1b4b;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control {
+        padding: 1rem 1.2rem;
+        border-radius: 16px;
+        border: 2px solid #e5e7eb;
+        background: rgba(255,255,255,0.65);
+        transition: all 0.35s ease;
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 5px rgba(79,70,229,0.25);
+        outline: none;
+        background: white;
+        transform: translateY(-3px);
+    }
+
+    .text-danger {
+        color: var(--danger) !important;
+        font-size: 0.9rem;
+        margin-top: 0.4rem;
+        display: block;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        color: white;
+        padding: 1rem 0;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: 0.4s;
+        box-shadow: 0 15px 35px rgba(79,70,229,0.35);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 22px 55px rgba(79,70,229,0.45);
+    }
+
+    .footer-text {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.95rem;
+        color: #374151;
+    }
+
+    .footer-text a {
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .alert {
+        border-radius: 18px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: none;
+    }
+</style>
+
+<section class="signup-wrapper">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+
+                <div class="signup-card">
+
+                    <h2 class="signup-title">Volunteer Sign Up</h2>
+                    <p class="signup-sub">Please enter the following details</p>
+
+                    <form action="" method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {% for fm in form1 %}
+                            <div class="form-group">
+                                {{ fm.label_tag }}
+                                {{ fm }}
+                                <small class="text-danger">{{ fm.errors|striptags }}</small>
+                            </div>
+                        {% endfor %}
+
+                        {% for fm in form2 %}
+                            <div class="form-group">
+                                {{ fm.label_tag }}
+                                {{ fm }}
+                                <small class="text-danger">{{ fm.errors|striptags }}</small>
+                            </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn-submit">Submit</button>
+
+                        <p class="footer-text">
+                            Already have an account?
+                            <a href="{% url 'login_volunteer' %}">Login</a>
+                        </p>
+
+                    </form>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock main %}

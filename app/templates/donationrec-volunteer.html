@@ -1,0 +1,245 @@
+{% extends 'base-db-volunteer.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #fff8e1 0%, #ffecd2 100%);
+        --glass: rgba(255, 255, 255, 0.97);
+        --shadow: 0 35px 90px rgba(0,0,0,0.18);
+        --accent: #f59e0b;
+        --accent-glow: #fbbf24;
+        --success: #10b981;
+    }
+
+    .pending-container {
+        padding: 3rem 2rem;
+        min-height: 100vh;
+        background: var(--bg);
+    }
+
+    .pending-card {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: var(--glass);
+        border-radius: 38px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(22px);
+        border: 1px solid rgba(255,255,255,0.8);
+        transition: all 0.7s ease;
+    }
+
+    .pending-card:hover {
+        transform: translateY(-20px);
+        box-shadow: 0 60px 140px rgba(245,158,11,0.35);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: 2.5px;
+        text-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: "";
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 9rem;
+        opacity: 0.07;
+        pointer-events: none;
+    }
+
+    .table-body {
+        padding: 3rem;
+        max-height: 70vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent) #fff8e1;
+    }
+
+    .table-body::-webkit-scrollbar {
+        width: 12px;
+    }
+    .table-body::-webkit-scrollbar-track {
+        background: #fff8e1;
+        border-radius: 10px;
+    }
+    .table-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--accent), var(--accent-glow));
+        border-radius: 10px;
+    }
+    .table-body::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-glow);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 15px;
+        margin: 0;
+    }
+
+    thead th {
+        background: linear-gradient(135deg, #d97706, #f59e0b);
+        color: white;
+        padding: 1.6rem 1.2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    tbody tr {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+        transition: all 0.5s ease;
+    }
+
+    tbody tr:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 30px 70px rgba(245,158,11,0.3);
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    }
+
+    tbody td {
+        padding: 1.8rem 1.2rem;
+        text-align: center;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    tbody td:first-child { border-top-left-radius: 24px; border-bottom-left-radius: 24px; }
+    tbody td:last-child { border-top-right-radius: 24px; border-bottom-right-radius: 24px; }
+
+    .status-pending {
+        {% comment %} background: linear-gradient(135deg, #f59e0b, #d97706); {% endcomment %}
+        color: green;
+        padding: 0.7rem 1.8rem;
+        font-weight: 800;
+        font-size: 1rem;
+    }
+
+    .view-details-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.9rem 2.2rem;
+        border-radius: 60px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 1.1rem;
+        display: inline-block;
+        box-shadow: 0 12px 35px rgba(16,185,129,0.4);
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .view-details-btn:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 60px rgba(16,185,129,0.6);
+        color: white;
+    }
+
+    .view-details-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.7s, height 0.7s;
+    }
+
+    .view-details-btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: #92400e;
+        font-size: 1.6rem;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        color: #f59e0b;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+        .card-header { font-size: 2rem; padding: 2.2rem 1.5rem; }
+        .table-body { padding: 2rem; }
+        tbody td { padding: 1.2rem 0.8rem; font-size: 1rem; }
+        .view-details-btn { padding: 0.7rem 1.5rem; font-size: 1rem; }
+    }
+</style>
+
+<div class="pending-container">
+    <div class="pending-card">
+        <div class="card-header">
+            Donation Received But Not Delivered Yet
+        </div>
+
+        <div class="table-body">
+            {% if donation %}
+            <table>
+                <thead>
+                    <tr class="text-center">
+                        <th>#</th>
+                        <th>Donation Name</th>
+                        <th>Donation Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in donation %}
+                    <tr class="text-center">
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td><strong>{{ i.donationname }}</strong></td>
+                        <td>{{ i.donationdate|date:"d M, Y" }}</td>
+                        <td><span class="status-pending">{{ i.status }}</span></td>
+                        <td>
+                            <a href="{% url 'donationrec_detail' i.id %}" class="view-details-btn">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-heart fa-beat"></i>
+                <h3>All donations have been delivered!</h3>
+                <p>Great job, volunteer — you've made a real difference.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.home_content')?.style.overflowY = 'auto';
+</script>
+
+{% endblock main %}

@@ -1,0 +1,140 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    #mytable {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        border: none !important;
+        font-size: 0.98rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        font-size: 0.92rem;
+    }
+
+    #mytable th {
+        padding: 1.4rem 1rem !important;
+        border: none;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    #mytable tbody tr {
+        transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        background-color: #fdfdfd;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #fff5f5;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(239, 68, 68, 0.22);
+        z-index: 10;
+    }
+
+    #mytable td {
+        padding: 1.3rem 1rem !important;
+        vertical-align: middle;
+        color: #1f2937;
+        font-weight: 500;
+        border-bottom: 1px solid #fee2e2;
+    }
+
+    /* Status Styling */
+    #mytable td:nth-child(4) {
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    /* Delete Link → Beautiful Button */
+    .delete-btn {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white !important;
+        padding: 0.6rem 1.6rem;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 6px 18px rgba(239, 68, 68, 0.3);
+        transition: all 0.4s ease;
+        min-width: 100px;
+    }
+
+    .delete-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(239, 68, 68, 0.45);
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #mytable thead { font-size: 0.82rem; }
+        #mytable td, #mytable th { padding: 1rem 0.6rem !important; }
+        .delete-btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
+    }
+</style>
+
+<div class="container mt-5 table-responsive">
+    <h3 class="text-center mb-4 fw-bold" style="color: #dc2626; letter-spacing: 1px;">
+        All Donations
+    </h3>
+    <hr class="bg-danger opacity-40 w-25 mx-auto mb-5">
+
+    <table id="mytable" class="table data align-middle text-center">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Donation Name</th>
+                <th scope="col">Donation Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in donation %}
+              <tr>
+                <td><strong>{{ forloop.counter }}</strong></td>
+                <td>{{ i.donationname }}</td>
+                <td>{{ i.donationdate|date:"d M Y" }}</td>
+                <td>
+                    <span class="text-capitalize fw-bold
+                        {% if i.status == 'pending' %}text-warning
+                        {% elif i.status == 'accept' %}text-success
+                        {% elif i.status == 'reject' %}text-danger
+                        {% else %}text-primary{% endif %}">
+                        {{ i.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'delete_donation' i.id %}" 
+                       class="delete-btn"
+                       onclick="return confirm('Are you sure you want to delete this donation permanently?')">
+                        Delete
+                    </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                  <td colspan="5" class="text-center py-5 text-muted fst-italic fs-4">
+                      No donations found
+                  </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock main %}

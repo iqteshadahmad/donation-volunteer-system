@@ -1,0 +1,358 @@
+{% extends 'base-db-volunteer.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    :root {
+        --bg: linear-gradient(135deg, #f0f4ff 0%, #e0eaff 100%);
+        --glass: rgba(255, 255, 255, 0.96);
+        --shadow: 0 35px 90px rgba(0,0,0,0.18);
+        --accent: #6366f1;
+        --success: #10b981;
+        --danger: #ef4444;
+        --text: #1e293b;
+    }
+
+    .detail-container {
+        padding: 3rem 2rem;
+        min-height: 100vh;
+        background: var(--bg);
+        display: flex;
+        justify-content: center;
+    }
+
+    .detail-card {
+        max-width: 1000px;
+        width: 100%;
+        background: var(--glass);
+        border-radius: 36px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.7);
+        transition: all 0.6s ease;
+    }
+
+    .detail-card:hover {
+        transform: translateY(-18px);
+        box-shadow: 0 55px 130px rgba(99,102,241,0.35);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        padding: 0.8rem 2rem;
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-shadow: 0 6px 25px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::after {
+        content: "Donation Details";
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 9rem;
+        opacity: 0.08;
+        pointer-events: none;
+    }
+
+    .detail-body {
+        padding: 0rem 3rem;
+        max-height: 75vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    .detail-body::-webkit-scrollbar {
+        width: 10px;
+    }
+    .detail-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(#6366f1, #a78bfa);
+        border-radius: 10px;
+    }
+
+    .section-title {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        padding: 1.2rem;
+        border-radius: 20px;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 2.5rem 0 1.5rem;
+        box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s ease;
+    }
+
+    .detail-row:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(99,102,241,0.15);
+    }
+
+    .detail-label {
+        font-weight: 700;
+        color: var(--accent);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .detail-value {
+        font-size: 1.2rem;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .detail-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
+        object-fit: cover;
+        border: 6px solid white;
+        box-shadow: 0 15px 40px rgba(99,102,241,0.3);
+        transition: all 0.5s ease;
+    }
+
+    .detail-img:hover {
+        transform: scale(1.15);
+        box-shadow: 0 25px 60px rgba(99,102,241,0.5);
+    }
+
+    .status-badge {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        color: white;
+        padding: 0.8rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        display: inline-block;
+        box-shadow: 0 10px 30px rgba(239,68,68,0.4);
+    }
+
+    /* Custom Radio Buttons */
+    .radio-group {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .radio-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .radio-item input[type="radio"] {
+        appearance: none;
+        width: 28px;
+        height: 28px;
+        border: 4px solid #e0e7ff;
+        border-radius: 50%;
+        background: white;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .radio-item input[type="radio"]:checked {
+        border-color: var(--success);
+        background: var(--success);
+    }
+
+    .radio-item input[type="radio"]:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 12px; height: 12px;
+        background: white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    textarea.form-control {
+        border-radius: 20px;
+        border: 2.5px solid #e0d4ff;
+        padding: 1.2rem;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        transition: all 0.4s ease;
+    }
+
+    textarea.form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 5px rgba(99,102,241,0.25);
+        transform: translateY(-4px);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 1.2rem 3rem;
+        border: none;
+        margin-bottom: 1rem;
+        border-radius: 60px;
+        font-size: 1.4rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 20px 50px rgba(16,185,129,0.4);
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 70px rgba(16,185,129,0.6);
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.7s, height 0.7s;
+    }
+
+    .submit-btn:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+
+    @media (max-width: 768px) {
+        .detail-row { grid-template-columns: 1fr; }
+        .card-header { font-size: 2rem; padding: 2rem; }
+        .detail-body { padding: 2rem; }
+        .detail-img { width: 100px; height: 100px; }
+    }
+</style>
+
+<div class="detail-container">
+    <div class="detail-card">
+        <div class="card-header">
+            View Accepted Donation Detail
+        </div>
+
+        <div class="detail-body">
+
+            <div class="section-title">Donor Details</div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donor Name</span></div>
+                <div class="detail-value">{{donation.donor.user.first_name}} {{donation.donor.user.last_name}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Contact</span></div>
+                <div class="detail-value">{{donation.donor.contact}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Email</span></div>
+                <div class="detail-value">{{donation.donor.user.email}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donor Photo</span></div>
+                <div><img src="{{donation.donor.userpic.url}}" class="detail-img" alt="Donor"></div>
+            </div>
+
+            <div class="section-title">Donation Details</div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Name</span></div>
+                <div class="detail-value">{{donation.donationname}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Image</span></div>
+                <div><img src="{{donation.donationpic.url}}" class="detail-img" alt="Donation"></div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Collection Location</span></div>
+                <div class="detail-value">{{donation.collectionloc}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Date</span></div>
+                <div class="detail-value">{{donation.donationdate|date:"d M, Y"}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Status</span></div>
+                <div><span class="status-badge">{{donation.status}}</span></div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Updation Date</span></div>
+                <div class="detail-value">{{donation.updationdate|date:"d M, Y"}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Admin Remark</span></div>
+                <div class="detail-value">{{donation.adminremark|default:"No remark yet"}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Donation Area</span></div>
+                <div class="detail-value">{{donation.donationarea.areaname}}</div>
+            </div>
+            <div class="detail-row">
+                <div><span class="detail-label">Assigned Volunteer</span></div>
+                <div class="detail-value">{{donation.volunteer|default:"Not assigned yet"}}</div>
+            </div>
+
+            {% if donation.status == 'Volunteer Allocated' %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="section-title">Update Collection Status</div>
+                <div class="detail-row">
+                    <div><span class="detail-label">Donation Received?</span></div>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="status" value="Donation Received" required>
+                            Donation Received
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="status" value="Donation NotReceived" required>
+                            Donation Not Received
+                        </label>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div><span class="detail-label">Your Remark</span></div>
+                    <div>
+                        <textarea class="form-control" name="volunteerremark" rows="4" placeholder="Add your collection note..."></textarea>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="submit-btn">Submit Update</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="detail-row">
+                <div><span class="detail-label">Volunteer Remark</span></div>
+                <div class="detail-value">{{donation.volunteerremark|default:"No remark provided"}}</div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.home_content')?.style.overflowY = 'auto';
+</script>
+
+{% endblock main %}

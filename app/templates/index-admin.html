@@ -1,0 +1,231 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    .stats-card {
+        border: none !important;
+        border-radius: 18px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        background: white;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-12px) scale(1.03);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.2) !important;
+        z-index: 10;
+    }
+
+    .stats-card .card-header {
+        padding: 2rem 1.5rem !important;
+        background: linear-gradient(135deg, var(--header-color) 0%, var(--header-color-dark) 100%) !important;
+        border-bottom: none;
+    }
+
+    /* Dynamic gradient colors per card */
+    .bg-primary { --header-color: #4361ee; --header-color-dark: #3f37c9; }
+    .bg-success { --header-color: #06d6a0; --header-color-dark: #049f75; }
+    .bg-danger { --header-color: #ef476f; --header-color-dark: #c9184a; }
+    .bg-secondary { --header-color: #6c757d; --header-color-dark: #495057; }
+
+    .stats-card h3 {
+        font-size: 1.15rem !important;
+        font-weight: 600;
+        margin-bottom: 0.8rem !important;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-card .display-3 {
+        font-size: 3.8rem !important;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .stats-card .fa-3x, .stats-card .fa-solid {
+        font-size: 2.8rem !important;
+        opacity: 0.9;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        transition: all 0.4s ease;
+    }
+
+    .stats-card:hover .fa-3x,
+    .stats-card:hover .fa-solid {
+        transform: rotate(15deg) scale(1.2);
+        opacity: 1;
+    }
+
+    .card-footer {
+        background: #f8f9ff !important;
+        border-top: 1px solid #e9ecef;
+        padding: 1.2rem !important;
+        transition: all 0.3s ease;
+    }
+
+    .stats-card:hover .card-footer {
+        background: #e0e7ff !important;
+    }
+
+    .card-footer a {
+        color: #4361ee !important;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1.02rem;
+        position: relative;
+    }
+
+    .card-footer a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 50%;
+        background: #4361ee;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .card-footer a:hover::after {
+        width: 100%;
+    }
+
+    .card-footer a:hover {
+        color: #3f37c9 !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .stats-card .display-3 { font-size: 3rem !important; }
+        .stats-card:hover { transform: translateY(-8px) scale(1.02); }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row g-4">
+
+        <!-- First Row -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-primary text-white">
+                    <h3>Total Donor</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa fa-list fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totaldonors}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'manage_donor' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- [All other cards exactly the same — only class names and content as you had] -->
+        <!-- Just copy-paste your remaining 6 cards below — no change needed -->
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-success text-white">
+                    <h3>Total Volunteer</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa fa-snowflake fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totalvolunteers}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'accepted_volunteer' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-danger text-white">
+                    <h3>Total Donation</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa fa-arrows fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totaldonations}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'all_donations' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-secondary text-white">
+                    <h3>Total Donation Area</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa fa-exchange fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totaldonationareas}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'manage_area' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Second Row -->
+    <div class="row g-4 mt-2">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-secondary text-white">
+                    <h3>Total New Donation Request</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa-solid fa-bahai fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totalpendingdonations}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'pending_donation' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-danger text-white">
+                    <h3>Total Accepted Donation</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa-solid fa-bars-progress fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totalaccepteddonations}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'accepted_donation' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card text-center stats-card shadow-sm">
+                <div class="card-header pt-4 bg-success text-white">
+                    <h3>Total Donation Delivered</h3>
+                    <hr class="my-3 bg-white opacity-30">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-5"><i class="fa-solid fa-asterisk fa-3x"></i></div>
+                        <div class="col-7"><h3 class="display-3">{{totaldelivereddonations}}</h3></div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <h4><a href="{% url 'donationdelivered_admin' %}">View Details</a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

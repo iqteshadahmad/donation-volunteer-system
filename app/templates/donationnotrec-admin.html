@@ -1,0 +1,207 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    .not-received-card {
+        background: #fafaf9;
+        border-radius: 34px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+        max-width: 1300px;
+        margin: 2.5rem auto;
+        border: 1px solid #e4e4e1;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #84cc16 0%, #65a30d 60%, #4d7c0f 100%);
+        color: white;
+        padding: 2.8rem 2rem;
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        border-bottom: 6px solid #3f6212;
+    }
+
+    .scroll-container {
+        max-height: 78vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #84cc16 #f0fdf4;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+        width: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+        background: #f0fdf4;
+        border-radius: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: #84cc16;
+        border-radius: 10px;
+        border: 2px solid #f0fdf4;
+    }
+
+    #mytable {
+        width: 100% !important;
+        border: none !important;
+        font-size: 1.05rem;
+        margin: 0;
+        background: transparent;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #65a30d 0%, #84cc16 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1.4px;
+        font-weight: 700;
+        font-size: 0.96rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    #mytable th {
+        padding: 1.7rem 1.4rem !important;
+        border: none;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    #mytable tbody tr {
+        background-color: #fdfdf9;
+        transition: all 0.5s ease;
+        border-bottom: 1px solid #ecfccb;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #f7fee7;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 45px rgba(132, 204, 22, 0.25);
+        z-index: 10;
+    }
+
+    #mytable td {
+        padding: 1.6rem 1.4rem !important;
+        vertical-align: middle;
+        color: #1f2937;
+        font-weight: 500;
+    }
+
+    /* Status - Calm & Clear */
+    #mytable td:nth-child(4) {
+        font-weight: 800;
+        color: #4d7c0f;
+        text-transform: uppercase;
+        font-size: 1.05rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* View Details Button - Minimal Nature Style */
+    .btn-view {
+        background: #84cc16;
+        color: white !important;
+        padding: 0.85rem 2.4rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.02rem;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 150px;
+        box-shadow: 0 10px 30px rgba(132, 204, 22, 0.3);
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-view:hover {
+        background: #65a30d;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 45px rgba(101, 163, 13, 0.45);
+    }
+
+    .btn-view::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.25);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-view:hover::before {
+        width: 280px;
+        height: 280px;
+    }
+
+    @media (max-width: 768px) {
+        .not-received-card { margin: 1.2rem; border-radius: 26px; }
+        .card-header { font-size: 1.9rem; padding: 2rem 1.5rem; }
+        #mytable td, #mytable th { padding: 1.3rem 0.9rem !important; font-size: 0.94rem; }
+        .btn-view { padding: 0.8rem 2rem; font-size: 0.98rem; min-width: 135px; }
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <div class="not-received-card">
+        <div class="card-header">
+            Donation Not Received
+        </div>
+
+        <div class="scroll-container">
+            <table id="mytable" class="table data align-middle text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Donation Name</th>
+                        <th scope="col">Donation Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in donation %}
+                    <tr class="text-center">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.donationname }}</td>
+                        <td>{{ i.donationdate|date:"d M Y" }}</td>
+                        <td>{{ i.status|upper }}</td>
+                        <td>
+                            <a href="{% url 'accepted_donationdetail' i.id %}" class="btn-view">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted fst-italic fs-2">No pending collections</div>
+                            <div class="mt-4 text-success fs-4">All donations are on track!</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Remove any DataTables junk -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof $.fn.DataTable !== 'undefined' && $('#mytable').length) {
+            $('#mytable').DataTable().destroy();
+        }
+    });
+</script>
+
+{% endblock main %}

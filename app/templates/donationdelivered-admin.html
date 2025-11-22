@@ -1,0 +1,151 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    #mytable {
+        background: white;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.14);
+        border: none !important;
+        font-size: 1rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #8345ffff 0%, #6e00f5ff 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1.3px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        position: relative;
+    }
+
+    #mytable th {
+        padding: 1.5rem 1rem !important;
+        border: none;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    #mytable tbody tr {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        background-color: #ffffffff;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #fffbeb;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #d5beffff 0%, #c7b8f9ff 100%) !important;
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 20px 45px rgba(245, 158, 11, 0.3);
+        z-index: 20;
+    }
+
+    #mytable td {
+        padding: 1.4rem 1rem !important;
+        vertical-align: middle;
+        color: #1c1917;
+        font-weight: 500;
+        border-bottom: 1px solid #bc8afdff;
+    }
+
+    /* Delivered Status - Golden & Bold */
+    #mytable td:nth-child(4) {
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #6200ffff !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* View Details Button - Celebration Style */
+    .btn-delivered {
+        background: linear-gradient(135deg, #8345ffff 0%, #6e00f5ff 100%);
+        color: white !important;
+        padding: 0.75rem 2.2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 140px;
+        box-shadow: 0 8px 25px rgba(218, 197, 255, 1);
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-delivered::before {
+        {% comment %} content: "Checkmark"; {% endcomment %}
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        font-size: 1.8rem;
+        opacity: 0;
+        transition: all 0.4s ease;
+    }
+
+    .btn-delivered:hover {
+        transform: translateY(-6px) scale(1.05);
+        box-shadow: 0 20px 50px rgba(218, 197, 255, 1);
+        background: linear-gradient(135deg, #8345ffff 0%, #6e00f5ff 100%);
+    }
+
+    .btn-delivered:hover::before {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+        #mytable thead { font-size: 0.85rem; }
+        #mytable td, #mytable th { padding: 1.1rem 0.6rem !important; }
+        .btn-delivered { padding: 0.65rem 1.6rem; font-size: 0.92rem; min-width: 120px; }
+    }
+</style>
+
+<div class="container mt-5 table-responsive">
+    <h3 class="text-center mb-4 fw-bold display-5" style="color: #6c00d1ff; letter-spacing: 1.5px;">
+        Donation Delivered Successfully
+    </h3>
+    <hr class="bg-black opacity-70 w-50 mx-auto mb-5" style="height: 4px; border-radius: 2px;">
+
+    <table id="mytable" class="table data align-middle text-center">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Donation Name</th>
+                <th scope="col">Donation Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in donation %}
+              <tr>
+                <td><strong>{{ forloop.counter }}</strong></td>
+                <td class="fw-semibold">{{ i.donationname }}</td>
+                <td>{{ i.donationdate|date:"d M Y" }}</td>
+                <td>Delivered</td>
+                <td>
+                    <a href="{% url 'accepted_donationdetail' i.id %}" class="btn-delivered">
+                        View Details
+                    </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                  <td colspan="5" class="text-center py-5">
+                      <div class="text-muted fst-italic fs-3">No delivered donations yet</div>
+                      <div class="mt-3">Keep up the great work!</div>
+                  </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock main %}

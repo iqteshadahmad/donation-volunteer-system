@@ -1,0 +1,130 @@
+{% extends 'base-db-admin.html' %}
+{% load static %}
+{% block main %}
+
+<style>
+    #mytable {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        border: none !important;
+        font-size: 0.98rem;
+    }
+
+    #mytable thead {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1.1px;
+        font-weight: 600;
+        font-size: 0.92rem;
+    }
+
+    #mytable th {
+        padding: 1.4rem 1rem !important;
+        border: none;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    #mytable tbody tr {
+        transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        background-color: #fdfdfd;
+    }
+
+    #mytable tbody tr:nth-child(even) {
+        background-color: #f0fdf4;
+    }
+
+    #mytable tbody tr:hover {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.25);
+        z-index: 10;
+    }
+
+    #mytable td {
+        padding: 1.3rem 1rem !important;
+        vertical-align: middle;
+        color: #1f2937;
+        font-weight: 500;
+        border-bottom: 1px solid #a7f3d0;
+    }
+
+    /* Status - Always Green for Accepted */
+    #mytable td:nth-child(4) {
+        font-weight: 700;
+        color: #059669 !important;
+        text-transform: capitalize;
+    }
+
+    /* View Details Button */
+    .btn-view {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white !important;
+        padding: 0.65rem 2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 130px;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        transition: all 0.4s ease;
+    }
+
+    .btn-view:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+        background: linear-gradient(135deg, #059669, #047857);
+        color: white !important;
+    }
+
+    @media (max-width: 768px) {
+        #mytable thead { font-size: 0.82rem; }
+        #mytable td, #mytable th { padding: 1rem 0.6rem !important; }
+        .btn-view { padding: 0.55rem 1.5rem; font-size: 0.9rem; min-width: 110px; }
+    }
+</style>
+
+<div class="container mt-5 table-responsive">
+    <h3 class="text-center mb-4 fw-bold" style="color: #059669; letter-spacing: 1px;">
+        Donation Accepted
+    </h3>
+    <hr class="bg-success opacity-50 w-25 mx-auto mb-5">
+
+    <table id="mytable" class="table data align-middle text-center">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Donation Name</th>
+                <th scope="col">Donation Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in donation %}
+              <tr>
+                <td><strong>{{ forloop.counter }}</strong></td>
+                <td class="fw-semibold">{{ i.donationname }}</td>
+                <td>{{ i.donationdate|date:"d M Y" }}</td>
+                <td>Accepted</td>
+                <td>
+                    <a href="{% url 'accepted_donationdetail' i.id %}" class="btn-view">
+                        View Details
+                    </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                  <td colspan="5" class="text-center py-5 text-muted fst-italic fs-4">
+                      No accepted donations found
+                  </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock main %}
