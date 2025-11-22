@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-fv+a7o4#h5ud@)%gj4=t(vamqqugvkeujlo7!e42c&@(_5vwe#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -126,8 +126,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-ALLOWED_HOSTS = ["*", ".onrender.com"]
+
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = "/static/"
 
