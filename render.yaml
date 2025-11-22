@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: donation-volunteer-system
+    env: python
+    buildCommand: "./venv/Scripts/pip install -r requirements.txt"
+    startCommand: "gunicorn donvol.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///db.sqlite3
