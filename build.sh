@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# This script runs on Render during every deploy
 set -o errexit
 
 pip install -r requirements.txt
 
-python manage.py migrate --no-input
-python manage.py collectstatic --no-input
+python manage.py collectstatic --noinput
+
+python manage.py migrate
+
+python manage.py loaddata local_data.json
+
+echo "Build complete! Superuser loaded."
